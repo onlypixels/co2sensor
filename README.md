@@ -9,6 +9,6 @@ pip install smbus
 ## Run
 The below command will run it so it can be accessed by other machines on the network:
 
-'''
+```
 flask run --host=0.0.0.0
-'''
+```
