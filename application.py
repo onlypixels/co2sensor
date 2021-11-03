@@ -3,6 +3,7 @@ from flask_cors import CORS,cross_origin
 from smbus import SMBus
 import time
 import json
+import datetime
 
 # I2C simplified: 0x5E
 EE895ADDRESS = 0x5E
@@ -32,7 +33,7 @@ def read_sensor_data(i2cbus):
 
 @app.route("/")
 @cross_origin(origin='*',headers=[])
-def hello_world():
+def sensor():
     i2cbus = SMBus(1)
     try:
         sensor_data = read_sensor_data(i2cbus)
@@ -42,6 +43,9 @@ def hello_world():
             time.sleep(1)
             sensor_data = read_sensor_data(i2cbus)
             print( str( sensor_data ) )
+        date_now = datetime.datetime.now()
+        with open('./log.csv', 'a') as file_object:
+            file_object.write(f'"{date_now.isoformat()}", {sensor_data["co2_ppm"]}, {sensor_data["temperature_c"]}\n')
         return json.dumps(sensor_data)
     except Exception as e:
         return json.dumps({"error": "cannot read sensor"+str(e) })
